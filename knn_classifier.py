@@ -37,31 +37,51 @@ with open("Datos\Diabetes-Clasificacion.csv", newline='') as dC:
 
 k = int(input("Ingresa K: "))
 distancias = []
+contadorInstancia = 1
+contadorPositivo = 0
 
-for patientC in patientsC:
-    for patientE in patientsE:
-        distancia = math.sqrt(
-            (patientC.preg - patientE.preg)**2 +
-            (patientC.plas - patientE.plas)**2 +
-            (patientC.pres - patientE.pres)**2 +
-            (patientC.skin - patientE.skin)**2 +
-            (patientC.insu - patientE.insu)**2 +
-            (patientC.mass - patientE.mass)**2 +
-            (patientC.pedi - patientE.pedi)**2 +
-            (patientC.age - patientE.age)**2
-        )
-
-        if len(distancias) < k:
-            distancias.append(distancia)
-            
-        else:
-            distancias.sort()
-            if distancia < distancias[-1]:
-                distancias.pop(-1)
-                distancias.append(distancia)
-
-    print(distancias)
+with open("Datos\Resultados.csv", mode="w", newline="") as file:
+    writer = csv.writer(file)
     
-# # Acceso a datos
-# print(patientsE)
-# print(patientsC)
+    headers = ["Instancia" , "tested_positive" , "tested_negative", "Clase Asignada"]
+    writer.writerow(headers)
+        
+    for patientC in patientsC:
+        for patientE in patientsE:
+            distancia = math.sqrt(
+                (patientC.preg - patientE.preg)**2 +
+                (patientC.plas - patientE.plas)**2 +
+                (patientC.pres - patientE.pres)**2 +
+                (patientC.skin - patientE.skin)**2 +
+                (patientC.insu - patientE.insu)**2 +
+                (patientC.mass - patientE.mass)**2 +
+                (patientC.pedi - patientE.pedi)**2 +
+                (patientC.age - patientE.age)**2
+            )
+
+            if len(distancias) < k:
+                distancias.append((distancia, patientE.classi))
+                
+            else:
+                distancias.sort()
+                if distancia < distancias[-1][0]:
+                    distancias.pop(-1)
+                    distancias.append((distancia, patientE.classi))
+                    
+        sumaN = sum(1 for (distancia, classi) in distancias if classi == "tested_negative")
+        sumaP = k - sumaN
+        
+        diagnostico = "tested_positive" if sumaP > sumaN else "tested_negative"
+        
+        if diagnostico == patientC.classi:
+            contadorPositivo = contadorPositivo + 1
+        
+        valores = [contadorInstancia, sumaP, sumaN, diagnostico]
+        writer.writerow(valores)  
+        
+        contadorInstancia = contadorInstancia + 1
+
+        portentajeP = contadorPositivo / len(patientsC) * 100
+                
+print("El {0}% de los casos fueron asignados correctamente.".format(portentajeP))
+    
