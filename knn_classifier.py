@@ -4,14 +4,14 @@ import csv
 # Definir una clase para los datos
 class Patient:
     def __init__(self, preg, plas, pres, skin, insu, mass, pedi, age, classi):
-        self.preg = preg
-        self.plas = plas
-        self.pres = pres
-        self.skin = skin
-        self.insu = insu
-        self.mass = mass
-        self.pedi = pedi
-        self.age = age
+        self.preg = int(preg)
+        self.plas = int(plas)
+        self.pres = int(pres)
+        self.skin = int(skin)
+        self.insu = int(insu)
+        self.mass = float(mass)
+        self.pedi = float(pedi)
+        self.age = int(age)
         self.classi = classi
 
 # Definir array de objetos de clase
