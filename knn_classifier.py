@@ -47,6 +47,7 @@ with open("Datos\Resultados.csv", mode="w", newline="") as file:
     writer.writerow(headers)
         
     for patientC in patientsC:
+        distancias.clear()
         for patientE in patientsE:
             distancia = math.sqrt(
                 (patientC.preg - patientE.preg)**2 +
@@ -67,6 +68,8 @@ with open("Datos\Resultados.csv", mode="w", newline="") as file:
                 if distancia < distancias[-1][0]:
                     distancias.pop(-1)
                     distancias.append((distancia, patientE.classi))
+        
+        
                     
         sumaN = sum(1 for (distancia, classi) in distancias if classi == "tested_negative")
         sumaP = k - sumaN
