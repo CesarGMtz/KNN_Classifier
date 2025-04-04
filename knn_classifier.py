@@ -1,6 +1,6 @@
+# Librerías necesarias para la ejecución del código
 import csv
 import math
-import copy
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
@@ -17,24 +17,26 @@ class Patient:
         self.age = float(age)
         self.classi = classi
 
+# Función principal para la ejecución del KNN con o ssin datos normalizados
 def ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv"):
-    # Leer datos
     patientsE = []
     patientsC = []
 
+    # Lee y almacena datos de entrenamiento
     with open("Datos/Diabetes-Entrenamiento.csv", newline='') as dE:
         reader = csv.reader(dE, delimiter=',')
         next(reader)
         for row in reader:
             patientsE.append(Patient(*row))
 
+    # Lee y almacena datos para su clasificación
     with open("Datos/Diabetes-Clasificacion.csv", newline='') as dC:
         reader = csv.reader(dC, delimiter=',')
         next(reader)
         for row in reader:
             patientsC.append(Patient(*row))
 
-    # Normalización usando MinMaxScaler
+    # En caso de ser necesario, se normaliza usando MinMaxScaler
     if normalizar:
         scaler = MinMaxScaler()
         X_train = np.array([[p.preg, p.plas, p.pres, p.skin, p.insu, p.mass, p.pedi, p.age] for p in patientsE])
@@ -53,10 +55,12 @@ def ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv"):
     contadorInstancia = 1
     contadorPositivo = 0
 
+    # Escribe los resultados en un archivo csv
     with open(f"Datos/{archivo_salida}", mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Instancia", "tested_positive", "tested_negative", "Clase Asignada"])
 
+        # Calcula la distancia euclidiana de cada paciente con los datos de entrenamiento
         for patientC in patientsC:
             distancias.clear()
             for patientE in patientsE:
@@ -72,6 +76,7 @@ def ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv"):
                 )
                 distancias.append((distancia, patientE.classi))
 
+            # Ordena los datos de menor a mayor
             distancias.sort()
             vecinos = distancias[:k]
             sumaN = sum(1 for (_, clase) in vecinos if clase == "tested_negative")
@@ -84,6 +89,7 @@ def ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv"):
             writer.writerow([contadorInstancia, sumaP, sumaN, diagnostico])
             contadorInstancia += 1
 
+    # Calcula el porcentaje de aciertos
     porcentaje = contadorPositivo / len(patientsC) * 100
     tipo = "Con Normalizacion" if normalizar else "Sin Normalizacion"
     print(f"{tipo} con k = {k} | El {porcentaje:.2f}% de los casos fueron asignados correctamente.")
