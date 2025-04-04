@@ -88,11 +88,20 @@ def ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv"):
     tipo = "Con Normalizacion" if normalizar else "Sin Normalizacion"
     print(f"{tipo} con k = {k} | El {porcentaje:.2f}% de los casos fueron asignados correctamente.")
 
+print("Introduce un valor de k, preferiblemente un valor impar, si deseas ejecutar un escenario predefinido, con valores de 1, 5 y 9 en k, introduce 0")
+k_input = int(input())
+
 # Ejecutar con k = 1, 5 y 10 para ambos casos
 print("\n Ejecucion Sin Normalizacion ")
-for k in [1, 5, 10]:
-    ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv")
+if k_input != 0:
+    ejecutar_knn(k_input, normalizar=False, archivo_salida="Resultados.csv")
+else:
+    for k in [1, 5, 9]:
+        ejecutar_knn(k, normalizar=False, archivo_salida="Resultados.csv")
 
 print("\n Ejecucion Con Normalizacion")
-for k in [1, 5, 10]:
-    ejecutar_knn(k, normalizar=True, archivo_salida="ResultadosNormalizados.csv")
+if k_input != 0:
+    ejecutar_knn(k_input, normalizar=True, archivo_salida="ResultadosNormalizados.csv")
+else:
+    for k in [1, 5, 9]:
+        ejecutar_knn(k, normalizar=True, archivo_salida="ResultadosNormalizados.csv")
